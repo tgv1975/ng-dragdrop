@@ -129,6 +129,41 @@
           }
         }
       }
+    },
+    "dragdrop": {
+      "root": "projects/dragdrop",
+      "sourceRoot": "projects/dragdrop/src",
+      "projectType": "library",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/dragdrop/tsconfig.lib.json",
+            "project": "projects/dragdrop/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/dragdrop/src/test.ts",
+            "tsConfig": "projects/dragdrop/tsconfig.spec.json",
+            "karmaConfig": "projects/dragdrop/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/dragdrop/tsconfig.lib.json",
+              "projects/dragdrop/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "defaultProject": "dragdrop-lib"
