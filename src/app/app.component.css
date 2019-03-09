@@ -1,0 +1,37 @@
+.container {
+    width: 400px;
+    height: 400px;
+    border: 1px solid red;
+    overflow: auto;
+}
+
+.drag {
+    width: 100px;
+    height: 100px;
+    background-color: lime;
+    border: 1px solid lime;
+}
+
+.drop {
+    width: 100px;
+    height: 100px;
+    background-color: lime;
+    border: 1px solid green;
+}
+
+.dragged {
+    background-color: red;
+}
+
+.dragging {
+    opacity: .5;
+}
+
+.accept-drop {
+    background-color: aqua;
+}
+
+.no-drop {
+    background-color: grey;
+    cursor: no-drop;
+}

@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
-import { DragdropComponent } from './dragdrop.component';
+import { DragDropService } from './dragdrop.service';
+import { DraggableDirective } from './draggable.directive';
+import { DroppableDirective } from './droppable.directive';
 
 @NgModule({
-  declarations: [DragdropComponent],
-  imports: [
-  ],
-  exports: [DragdropComponent]
+    declarations: [DraggableDirective, DroppableDirective],
+    imports: [],
+    exports: [DraggableDirective, DroppableDirective],
+    providers: [DragDropService]
 })
-export class DragdropModule { }
+export class DragDropModule { }
