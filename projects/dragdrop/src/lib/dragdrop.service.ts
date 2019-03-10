@@ -70,7 +70,7 @@ export class DragDropService {
     *    - sets the dragging state flag
     *    - attaches required event listeners.
     */
-    activate() {
+    private activate() {
         this.dragStart();
 
         // Subscription that need to be saved in order to unsubscribe on drag deactivation.
@@ -135,7 +135,7 @@ export class DragDropService {
     *    - removes the event listeners
     *    - clears the draggables array
     */
-    deactivate(cancelled?: boolean) {
+    private deactivate(cancelled?: boolean) {
 
         this.viewportMouseMoveSubscription.unsubscribe();
         this.viewportResizeSubscription.unsubscribe();
@@ -150,7 +150,7 @@ export class DragDropService {
     /**
     * Initiates the drag process.
     */
-    dragStart() {
+    private dragStart() {
         this._viewportRect = this._viewportElement.getBoundingClientRect();
         this.lastMousePos = {};
         this.lastDisplacement = {};
@@ -159,7 +159,7 @@ export class DragDropService {
     /**
     * Stops all dragging.
     */
-    dragStop(cancelled?: boolean) {
+    private dragStop(cancelled?: boolean) {
 
         for (let i = 0; i < this._draggables.length; i++) {
             this.endItemDrag(this._draggables[i], cancelled);
@@ -179,18 +179,11 @@ export class DragDropService {
     *    the draggedClass to the dragged element.
     * @param draggable The draggable item to reveal the drag process for.
     */
-    beginItemDrag(draggable: DraggableItem) {
+    private beginItemDrag(draggable: DraggableItem) {
 
         if (draggable.isDragging) {
             return;
         }
-
-        // Style the viewport cursor, otherwise the drag cursor will vary due to
-        // pointer-events being none on the draggable element.
-        this.viewportCursor = this._viewportElement.style.cursor;
-        this._viewportElement.style.cursor = 'pointer';
-        this._viewportElement.style.cursor = 'grabbing';
-        this._viewportElement.style.cursor = '-webkit-grabbing';
 
         // Create the actual DOM elements to represent drag.
         this.createDraggableElement(draggable);
@@ -198,6 +191,13 @@ export class DragDropService {
         draggable.isDragging = true;
         draggable.dragEl.style.visibility = 'visible';
         this.addClasses(draggable.el.nativeElement, draggable.draggedClass);
+
+        // Style the viewport cursor, otherwise the drag cursor will vary due to
+        // pointer-events being none on the draggable element.
+        this.viewportCursor = this._viewportElement.style.cursor;
+        this._viewportElement.style.cursor = 'pointer';
+        this._viewportElement.style.cursor = 'grabbing';
+        this._viewportElement.style.cursor = '-webkit-grabbing';
 
         this._dragging.next(draggable);
 
@@ -209,7 +209,7 @@ export class DragDropService {
     *    - emits a dropping event with the draggable item as parameter
     * @param draggable The draggable item to reveal the drag process for.
     */
-    endItemDrag(draggable: DraggableItem, cancelled?: boolean) {
+    private endItemDrag(draggable: DraggableItem, cancelled?: boolean) {
 
         if (!draggable.isDragging) {
             return;
@@ -259,7 +259,7 @@ export class DragDropService {
     * Creates the actual DOM element to represent dragging.
     * @param draggable An object from the draggables array.
     */
-    createDraggableElement(draggable: DraggableItem) {
+    private createDraggableElement(draggable: DraggableItem) {
         const elRect = draggable.el.nativeElement.getBoundingClientRect();
         const overlay: any = document.createElement('div');
 
@@ -312,7 +312,7 @@ export class DragDropService {
     * @param mouseY The ordinate coordinate.
     * @return True if mouse cursor is outside the viewport, false otherwise.
     */
-    isMouseOutsideViewport(mouseX: number, mouseY: number): boolean {
+    private isMouseOutsideViewport(mouseX: number, mouseY: number): boolean {
         return mouseX < this._viewportRect.left ||
             mouseX > this._viewportRect.right ||
             mouseY < this._viewportRect.top ||
@@ -325,7 +325,7 @@ export class DragDropService {
     * @param left - The abscisa coordinate, straight from the mousemove event.
     * @param top - The ordinate coordinate, straight from the mousemove event.
     */
-    moveDraggableElement(draggable: DraggableItem, left: number, top: number) {
+    private moveDraggableElement(draggable: DraggableItem, left: number, top: number) {
 
         // Adjust of the grab point offset.
         draggable.pos.x = left - draggable.grabPoint.x;
@@ -340,7 +340,7 @@ export class DragDropService {
     * Destroys the cloned DOM element that represents dragging.
     * @param draggable An object from the draggable array.
     */
-    destroyDraggableElement(draggable: DraggableItem) {
+    private destroyDraggableElement(draggable: DraggableItem) {
         if (draggable.dragEl) {
             this._viewportElement.removeChild(draggable.dragEl);
             delete draggable.dragEl;
@@ -383,7 +383,7 @@ export class DragDropService {
         }
     }
 
-    clearScrollIntervals() {
+    private clearScrollIntervals() {
         clearInterval(this.scrollXInterval);
         clearInterval(this.scrollYInterval);
     }
@@ -395,7 +395,7 @@ export class DragDropService {
     * @param x The abscisa coordinate.
     * @param y The ordonate coordinate.
     */
-    scrollViewportAsNeeded(x: number, y: number) {
+    private scrollViewportAsNeeded(x: number, y: number) {
         const bottomBias = 3;
         const rightBias = 2;
 
@@ -409,9 +409,9 @@ export class DragDropService {
 
 
         if (y <= Math.round(this._viewportRect.top) && this._viewportElement.scrollTop > 0) {
-            this.scrollYInterval = setInterval(() => { this._viewportElement.scrollTop-- }, this.scrollIntervalDelay);
+            this.scrollYInterval = setInterval(() => { this._viewportElement.scrollTop--; }, this.scrollIntervalDelay);
         } else if (y >= Math.round(this._viewportRect.bottom - bottomBias)) {
-            this.scrollYInterval = setInterval(() => { this._viewportElement.scrollTop++ }, this.scrollIntervalDelay);
+            this.scrollYInterval = setInterval(() => { this._viewportElement.scrollTop++; }, this.scrollIntervalDelay);
         }
     }
 
@@ -422,7 +422,7 @@ export class DragDropService {
     * @param y The ordinate coordinate to check against.
     * @return True if threshold has been passed, false otherwise.
     */
-    startThresholdPassed(draggable: DraggableItem, x: number, y: number): boolean {
+    private startThresholdPassed(draggable: DraggableItem, x: number, y: number): boolean {
         return Math.abs(draggable.mouseDownEvent.clientX - x) >= draggable.startThreshold ||
             Math.abs(draggable.mouseDownEvent.clientY - y) >= draggable.startThreshold;
     }
@@ -431,7 +431,7 @@ export class DragDropService {
     * Handles vieport mouse move events.
     * @param event A mouse move  event.
     */
-    onViewportMouseMove(event: MouseEvent) {
+    private onViewportMouseMove(event: MouseEvent) {
         // Attempt to scroll the vieport so as to keep the current mouse coordinates in view.
         this.scrollViewportAsNeeded(event.clientX, event.clientY);
 
@@ -466,7 +466,7 @@ export class DragDropService {
     * Handles document mouse up events.
     * @param event The mouse move event.
     */
-    onVieportMouseUp(event: MouseEvent) {
+    private onVieportMouseUp(event: MouseEvent) {
         this.deactivate();
     }
 }

@@ -61,14 +61,14 @@ describe('DragdropService', () => {
         expect(service.viewportElement).toBe(container);
     });
 
-    it('registers draggable', async(() => {
+    it('registers draggable', () => {
 
         service.dragging$.subscribe((el: DraggableItem) => {
             console.log(el);
         });
 
-        service.registerDraggable(<any>{ target: dragTarget }, dragRef, {}, '', '', 0);
+        service.registerDraggable(<any>{ target: dragTarget }, dragRef, {}, '#testContainer', '', '', 0);
 
-        // containerRef.triggerEventHandler('mousemove', { type: 'mousemove', target: container, clientX: 10, clientY: 10 });
-    }));
+        containerRef.triggerEventHandler('mousemove', { type: 'mousemove', target: container, clientX: 100, clientY: 100 });
+    });
 });

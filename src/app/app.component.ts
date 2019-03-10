@@ -15,7 +15,6 @@ export class AppComponent {
 
     handleMouseDown() {
         this.canDrag = true;
-        console.log(this.canDrag);
     }
 
     handleMouseUp() {
@@ -28,6 +27,6 @@ export class AppComponent {
     }
 
     onDragDrop($event) {
-        console.log('Dropped:', $event)
+        console.log('Dropped:', $event);
     }
 }

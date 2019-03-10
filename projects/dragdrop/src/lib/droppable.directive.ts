@@ -7,7 +7,7 @@ import {
     OnDestroy
 } from '@angular/core';
 
-import { Subject, fromEvent } from 'rxjs';
+import { Subject, Subscription, fromEvent } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { DraggableItem } from './draggable-item';
@@ -20,10 +20,10 @@ export class DroppableDirective implements OnDestroy {
     ngUnsubscribe: Subject<any> = new Subject<any>();
 
     private dragging = false;        // Flag representing the dragging state.
-    private mouseCaptured = false;   // True if mouse is in the host element client area.
+    private isDropTarget = false;   // True if the drop occurs on the element.
 
-    private mouseEnterSubscription;    // Subscription to mouse enter events from host element.
-    private mouseLeaveSubscription;    // Subscription to mouse leave events from host element.
+    private mouseEnterSubscription: Subscription;    // Subscription to mouse enter events from host element.
+    private mouseLeaveSubscription: Subscription;    // Subscription to mouse leave events from host element.
     private hoverTimer;                // Timer to delay mouse enter event processing.
 
     // Emits data needed for the host component to determine if its droppables would accept the draggable. [1]
@@ -34,12 +34,13 @@ export class DroppableDirective implements OnDestroy {
     @Input('ddNotDroppableClass') notDroppableClasses: string = '';    // CSS classes for the droppable when it does not accep drop.
     @Input('ddDroppableHoverDelay') hoverDelay: number = 0;    // Delay in milliseconds before processing mouse enter events. [2]
 
-    @Output('appOnDrop') drop: EventEmitter<any> = new EventEmitter<DraggableItem>(false); // Emits drag-drop data when a drag stops.
+    @Output('ddOnDrop') drop: EventEmitter<any> = new EventEmitter<DraggableItem>(false); // Emits drag-drop data when a drag stops.
 
 
-    constructor(private el: ElementRef,
+    constructor(
+        private el: ElementRef,
         private dragDropService: DragDropService) {
-        // Subscribe to the DragService observables:
+        // Subscribe to the DragDropService observables:
         dragDropService.dragging$
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe((draggable: DraggableItem) => this.onDragging$(draggable));
@@ -88,11 +89,11 @@ export class DroppableDirective implements OnDestroy {
     */
     onDropping$(draggable: DraggableItem) {
         // Emit the drop event, which the host component should be listening to.
-        // The draggable data, the droppable object, and the mouse capture state are sent.
-        // If mouse capture is false, the drop occured outside of the droppable,
+        // The draggable data, the droppable object, and the drop target state are sent.
+        // If isDropTarget is false, the drop occured outside of the droppable,
         // and the host component should act accordingly.
         if (!draggable.cancelled && this.drop) {
-            this.drop.emit({ draggable: draggable.data, droppable: this.droppable, mouseCaptured: this.mouseCaptured });
+            this.drop.emit({ draggable: draggable.data, droppable: this.droppable, isDropTarget: this.isDropTarget });
         }
 
         // Save dragging state.
@@ -102,8 +103,8 @@ export class DroppableDirective implements OnDestroy {
         this.mouseEnterSubscription.unsubscribe();
         this.mouseLeaveSubscription.unsubscribe();
 
-        // Must reset mouseCaptured in case mouseexit event did not get a chance to occur.
-        this.mouseCaptured = false;
+        // Must reset isDropTarget in case mouseexit event did not get a chance to occur.
+        this.isDropTarget = false;
 
         // Reset CSS classes.
         this.removeClasses();
@@ -118,7 +119,7 @@ export class DroppableDirective implements OnDestroy {
             return;
         }
 
-        this.mouseCaptured = true;
+        this.isDropTarget = true;
 
         if (this.acceptDrop) {
             this.dragDropService.addClasses(this.el.nativeElement, this.droppableClasses);
@@ -138,7 +139,7 @@ export class DroppableDirective implements OnDestroy {
             return;
         }
 
-        this.mouseCaptured = false;
+        this.isDropTarget = false;
         this.removeClasses();
     }
 

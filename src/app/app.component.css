@@ -5,6 +5,10 @@
     overflow: auto;
 }
 
+.expander {
+    width: 1000px;
+}
+
 .drag {
     width: 100px;
     height: 100px;
@@ -23,12 +27,17 @@
     background-color: red;
 }
 
+.dragged-additional {
+    border: 6px solid blue;
+}
+
 .dragging {
     opacity: .5;
 }
 
 .accept-drop {
     background-color: aqua;
+    cursor: grab;
 }
 
 .no-drop {

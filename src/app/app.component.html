@@ -1,14 +1,51 @@
 <div class="container">
+    <div class="expander">expander</div>
     <div class="drag"
          [ddDraggable]="{data: 'data'}"
          [ddContainerSelector]="'.container'"
          [ddCanDrag]="canDrag"
-         ddDraggedClass="dragged"
+         ddDraggedClass="dragged dragged-additional"
          ddDraggingClass="dragging">
         <span (mousedown)="handleMouseDown()"
               (mouseup)="handleMouseUp()">Grab here to drag</span></div>
 
     <a href="example">Example</a>
+
+    <div class="drop"
+         [ddDroppable]="true"
+         (ddDroppableTest)="onDroppableTest($event)"
+         [ddAcceptDrop]="false"
+         (ddOnDrop)="onDragDrop($event)"
+         ddDroppableClass="accept-drop"
+         ddNotDroppableClass="no-drop"
+         [ddDroppableHoverDelay]="1">No Drop</div>
+
+    <div class="drop"
+         [ddDroppable]="true"
+         (ddDroppableTest)="onDroppableTest($event)"
+         [ddAcceptDrop]="true"
+         (ddOnDrop)="onDragDrop($event)"
+         ddDroppableClass="accept-drop"
+         ddNotDroppableClass="no-drop"
+         [ddDroppableHoverDelay]="1">Drop!</div>
+
+    <div class="drop"
+         [ddDroppable]="true"
+         (ddDroppableTest)="onDroppableTest($event)"
+         [ddAcceptDrop]="false"
+         (ddOnDrop)="onDragDrop($event)"
+         ddDroppableClass="accept-drop"
+         ddNotDroppableClass="no-drop"
+         [ddDroppableHoverDelay]="1">No Drop</div>
+
+    <div class="drop"
+         [ddDroppable]="true"
+         (ddDroppableTest)="onDroppableTest($event)"
+         [ddAcceptDrop]="true"
+         (ddOnDrop)="onDragDrop($event)"
+         ddDroppableClass="accept-drop"
+         ddNotDroppableClass="no-drop"
+         [ddDroppableHoverDelay]="1">Drop!</div>
 
     <div class="drop"
          [ddDroppable]="true"
