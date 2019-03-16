@@ -92,8 +92,13 @@ export class DroppableDirective implements OnDestroy {
         // The draggable data, the droppable object, and the drop target state are sent.
         // If isDropTarget is false, the drop occured outside of the droppable,
         // and the host component should act accordingly.
-        if (!draggable.cancelled && this.drop) {
-            this.drop.emit({ draggable: draggable.data, droppable: this.droppable, isDropTarget: this.isDropTarget });
+        if (this.drop) {
+            this.drop.emit({
+                draggable: draggable.data,
+                droppable: this.droppable,
+                isDropTarget: this.isDropTarget,
+                cancelled: draggable.cancelled
+            });
         }
 
         // Save dragging state.
