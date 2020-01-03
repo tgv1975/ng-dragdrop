@@ -25,7 +25,7 @@ export class DragDropService {
     private _dragging: Subject<DraggableItem> = new Subject();
     dragging$ = this._dragging.asObservable();
 
-    // Flag representing the dragging state. If true, something is being dropped.
+    // Flag representing the dropping state. If true, something is being dropped.
     private _dropping: Subject<DraggableItem> = new Subject();
     dropping$ = this._dropping.asObservable();
 
