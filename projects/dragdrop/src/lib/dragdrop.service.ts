@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 
 import { Subject, fromEvent, Subscription } from 'rxjs';
-import { sampleTime, debounceTime, first } from 'rxjs/operators';
+import { sampleTime, debounceTime, first, takeUntil, take } from 'rxjs/operators';
 
 import { DraggableItem } from './draggable-item';
 
@@ -12,6 +12,8 @@ import { DraggableItem } from './draggable-item';
 export class DragDropService {
 
     static readonly DRAG_Z_INDEX: string = '100000';
+
+    private ngUnsubscribe: Subject<boolean> = new Subject();
 
     // An array of registered draggable objects. It is an array for future-proofing,
     // to allow implementation of multi-element drag and drop, if it ever becomes
@@ -57,10 +59,6 @@ export class DragDropService {
         this._viewportRect = this._viewportElement.getBoundingClientRect();
     }
 
-    // Subscribe to vieport element mouse move event to track dragging.
-    private viewportMouseMoveSubscription: Subscription;
-    // Subscribe to viewport element resize event to recalculate drag parameters.
-    private viewportResizeSubscription: Subscription;
     // Save the original viewport cursor.
     private viewportCursor: string;
 
@@ -83,14 +81,19 @@ export class DragDropService {
 
         // Subscription that need to be saved in order to unsubscribe on drag deactivation.
 
-        this.viewportMouseMoveSubscription = fromEvent(this._viewportElement, 'mousemove')
-            .pipe(sampleTime(16))
+        fromEvent(this._viewportElement, 'mousemove')
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                sampleTime(16)
+            )
             .subscribe((event: MouseEvent) => {
                 this.onViewportMouseMove(event);
             });
 
-        this.viewportResizeSubscription = fromEvent(window, 'resize')
-            .pipe(debounceTime(100))
+        fromEvent(window, 'resize')
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                debounceTime(100))
             .subscribe(() => {
                 this._viewportRect = this._viewportElement.getBoundingClientRect();
             });
@@ -100,7 +103,10 @@ export class DragDropService {
 
         // Observe mouseup to end drag:
         fromEvent(this._viewportElement, 'mouseup')
-            .pipe(first())
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                take(1)
+            )
             .subscribe((event: MouseEvent) => {
                 this.onVieportMouseUp(event);
             });
@@ -108,29 +114,40 @@ export class DragDropService {
         // Observe mouse down (in fact, RIGHT mouse button, since the left is
         // going to be pressed by design) during drag, to abort.
         fromEvent(this._viewportElement, 'mousedown')
-            .pipe(first())
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                take(1)
+            )
             .subscribe(() => {
                 this.deactivate(true);
             });
 
         // Observe mouseup on the window object, for events outside the vieport.
         fromEvent(window, 'mouseup')
-            .pipe(first())
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                take(1)
+            )
             .subscribe(() => {
                 this.deactivate(true);
             });
 
         // Observe keydown on the window object, deactivate if any key is pressed.
         fromEvent(window, 'keydown')
-            .pipe(first())
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                take(1)
+            )
             .subscribe(() => {
                 this.deactivate(true);
             });
 
-
         // Observe blur on the window object, deactivate if window loses focus.
         fromEvent(window, 'blur')
-            .pipe(first())
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                take(1)
+            )
             .subscribe(() => {
                 this.deactivate(true);
             });
@@ -147,8 +164,7 @@ export class DragDropService {
     */
     private deactivate(cancelled?: boolean) {
 
-        this.viewportMouseMoveSubscription.unsubscribe();
-        this.viewportResizeSubscription.unsubscribe();
+        this.ngUnsubscribe.next();
 
         this.dragStop(cancelled);
         this._draggables = [];
