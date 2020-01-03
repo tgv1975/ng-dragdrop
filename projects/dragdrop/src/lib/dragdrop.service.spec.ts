@@ -1,8 +1,8 @@
 import { TestBed, async } from '@angular/core/testing';
 
 import { DragDropService } from './dragdrop.service';
-import { ElementRef, DebugElement } from '@angular/core';
-import { DraggableItem } from 'dragdrop/dragdrop';
+import { DebugElement } from '@angular/core';
+import { DraggableItem } from './draggable-item';
 
 describe('DragdropService', () => {
     let service: DragDropService;
@@ -62,7 +62,6 @@ describe('DragdropService', () => {
     });
 
     it('registers draggable', () => {
-
         service.dragging$.subscribe((el: DraggableItem) => {
             console.log(el);
         });

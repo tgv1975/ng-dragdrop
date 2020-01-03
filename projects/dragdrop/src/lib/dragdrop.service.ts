@@ -21,6 +21,14 @@ export class DragDropService {
         return this._draggables;
     }
 
+    // Emits on drag activation.
+    private _activate: Subject<boolean> = new Subject();
+    activate$ = this._activate.asObservable();
+
+    // Emits on drag deactivation.
+    private _deactivate: Subject<boolean> = new Subject();
+    deactivate$ = this._deactivate.asObservable();
+
     // Flag representing the dragging state. If true, something is being dragged.
     private _dragging: Subject<DraggableItem> = new Subject();
     dragging$ = this._dragging.asObservable();
@@ -126,6 +134,8 @@ export class DragDropService {
             .subscribe(() => {
                 this.deactivate(true);
             });
+
+        this._activate.next();
     }
 
     /**
@@ -145,6 +155,8 @@ export class DragDropService {
 
         // Clear any active scroll timer.
         this.clearScrollIntervals();
+
+        this._deactivate.next();
     }
 
     /**

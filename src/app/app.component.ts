@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DragDropService } from 'dragdrop';
 
 @Component({
     selector: 'app-root',
@@ -9,8 +10,16 @@ export class AppComponent {
     title = 'dragdrop-lib';
     canDrag = false;
 
-    constructor() {
+    constructor(dragDropService: DragDropService) {
         document.onmouseup = () => this.canDrag = false;
+
+        dragDropService.activate$
+            .subscribe(() => console.log('Drag activated.'));
+
+
+        dragDropService.deactivate$
+            .subscribe(() => console.log('Drag de-activated.'));
+
     }
 
     handleMouseDown() {
