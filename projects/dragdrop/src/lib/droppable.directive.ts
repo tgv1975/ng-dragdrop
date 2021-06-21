@@ -17,7 +17,7 @@ import { DragDropService } from './dragdrop.service';
     selector: '[ddDroppable]'
 })
 export class DroppableDirective implements OnDestroy {
-    ngUnsubscribe: Subject<any> = new Subject<any>();
+    ngUnsubscribe: Subject<void> = new Subject<void>();
 
     private dragging = false;        // Flag representing the dragging state.
     private isDropTarget = false;   // True if the drop occurs on the element.

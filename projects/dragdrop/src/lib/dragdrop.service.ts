@@ -10,10 +10,9 @@ import { DraggableItem } from './draggable-item';
 
 @Injectable()
 export class DragDropService {
-
     static readonly DRAG_Z_INDEX: string = '100000';
 
-    private ngUnsubscribe: Subject<boolean> = new Subject();
+    private ngUnsubscribe: Subject<void> = new Subject();
 
     // An array of registered draggable objects. It is an array for future-proofing,
     // to allow implementation of multi-element drag and drop, if it ever becomes
@@ -24,11 +23,11 @@ export class DragDropService {
     }
 
     // Emits on drag activation.
-    private _activate: Subject<boolean> = new Subject();
+    private _activate: Subject<void> = new Subject();
     activate$ = this._activate.asObservable();
 
     // Emits on drag deactivation.
-    private _deactivate: Subject<boolean> = new Subject();
+    private _deactivate: Subject<void> = new Subject();
     deactivate$ = this._deactivate.asObservable();
 
     // Flag representing the dragging state. If true, something is being dragged.
