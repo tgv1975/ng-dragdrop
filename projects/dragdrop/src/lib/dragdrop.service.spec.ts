@@ -1,4 +1,4 @@
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 
 import { DragDropService } from './dragdrop.service';
 import { DebugElement } from '@angular/core';
@@ -13,7 +13,7 @@ describe('DragdropService', () => {
     let dropTarget: HTMLElement;
     let dropRef: DebugElement;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         const oldContainer: HTMLElement = document.getElementById('testContainer');
         if (oldContainer) {
             document.body.removeChild(oldContainer);
@@ -44,7 +44,7 @@ describe('DragdropService', () => {
         providers: [DragDropService]
     }));
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         service = TestBed.get(DragDropService);
         service.viewportElement = '#testContainer';
     }));
